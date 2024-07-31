@@ -15,7 +15,16 @@ type UserController struct {
 func NewUserController(service *services.UserService) *UserController {
 	return &UserController{service: service}
 }
-
+// @Summary Get user balance
+// @Description Get balance of a specific user
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param   user_id path int true "User ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users/{user_id}/balance [get]
 func (c *UserController) GetUserBalance(ctx *gin.Context) {
 	userID, err := strconv.Atoi(ctx.Param("user_id"))
 	if err != nil {
@@ -32,6 +41,16 @@ func (c *UserController) GetUserBalance(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"balance": balance})
 }
 
+// @Summary Transfer amount
+// @Description Transfer amount between users
+// @Tags transactions
+// @Accept  json
+// @Produce  json
+// @Param   transfer body map[string]interface{} true "Transfer details"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /transactions/transfer [post]
 func (c *UserController) TransferAmount(ctx *gin.Context) {
 	var request struct {
 		FromUserID int     `json:"from_user_id"`

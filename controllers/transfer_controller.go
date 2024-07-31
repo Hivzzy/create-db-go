@@ -15,6 +15,16 @@ func NewTransferController(service *services.TransferService) *TransferControlle
 	return &TransferController{service: service}
 }
 
+// @Summary Create a new transfer
+// @Description Create a transfer between users
+// @Tags transfers
+// @Accept  json
+// @Produce  json
+// @Param transfer body map[string]interface{} true "Transfer details"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /transfers [post]
 func (c *TransferController) CreateTransfer(ctx *gin.Context) {
 	var request struct {
 		FromUserID int     `json:"from_user_id"`
@@ -36,6 +46,14 @@ func (c *TransferController) CreateTransfer(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Transfer successful"})
 }
 
+// @Summary Get all transfers
+// @Description Get details of all transfers
+// @Tags transfers
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} models.Transfer
+// @Failure 500 {object} map[string]string
+// @Router /transfers [get]
 func (c *TransferController) GetAllTransfers(ctx *gin.Context) {
 	transfers, err := c.service.GetAllTransfers()
 	if err != nil {

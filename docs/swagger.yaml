@@ -1,0 +1,456 @@
+definitions:
+  models.Purchase:
+    properties:
+      amount:
+        type: number
+      id:
+        type: integer
+      is_chargeback:
+        type: boolean
+      item_name:
+        type: string
+      purchase_date:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.Transaction:
+    properties:
+      amount:
+        type: number
+      id:
+        type: integer
+      is_chargeback:
+        type: boolean
+      related_id:
+        type: integer
+      transaction_date:
+        type: string
+      transaction_type:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.Transfer:
+    properties:
+      amount:
+        type: number
+      from_user_id:
+        type: integer
+      id:
+        type: integer
+      is_chargeback:
+        type: boolean
+      to_user_id:
+        type: integer
+      transfer_date:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /purchases:
+    get:
+      consumes:
+      - application/json
+      description: Get details of all purchases
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Purchase'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all purchases
+      tags:
+      - purchases
+    post:
+      consumes:
+      - application/json
+      description: Create a new purchase for a user
+      parameters:
+      - description: Purchase details
+        in: body
+        name: purchase
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new purchase
+      tags:
+      - purchases
+  /transactions:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of transactions with pagination
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Sort
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get transactions
+      tags:
+      - transactions
+  /transactions/{transaction_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific transaction
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: transaction_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Transaction'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get transaction by ID
+      tags:
+      - transactions
+  /transactions/chargeback/{transaction_id}:
+    post:
+      consumes:
+      - application/json
+      description: Perform a chargeback on a specific transaction
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: transaction_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Chargeback a transaction
+      tags:
+      - transactions
+  /transactions/date:
+    get:
+      consumes:
+      - application/json
+      description: Get transactions within a specific date range
+      parameters:
+      - description: Start date
+        in: query
+        name: start_date
+        required: true
+        type: string
+      - description: End date
+        in: query
+        name: end_date
+        required: true
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Sort
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get transactions by date range
+      tags:
+      - transactions
+  /transactions/transfer:
+    post:
+      consumes:
+      - application/json
+      description: Transfer amount between users
+      parameters:
+      - description: Transfer details
+        in: body
+        name: transfer
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Transfer amount
+      tags:
+      - transactions
+  /transactions/user/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get transactions for a specific user with pagination
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Sort
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get transactions by user ID
+      tags:
+      - transactions
+  /transfers:
+    get:
+      consumes:
+      - application/json
+      description: Get details of all transfers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Transfer'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all transfers
+      tags:
+      - transfers
+    post:
+      consumes:
+      - application/json
+      description: Create a transfer between users
+      parameters:
+      - description: Transfer details
+        in: body
+        name: transfer
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new transfer
+      tags:
+      - transfers
+  /users/{user_id}/balance:
+    get:
+      consumes:
+      - application/json
+      description: Get balance of a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get user balance
+      tags:
+      - users
+swagger: "2.0"

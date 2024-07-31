@@ -17,6 +17,18 @@ func NewTransactionController(service *services.TransactionService) *Transaction
 	return &TransactionController{service: service}
 }
 
+// @Summary Get transactions
+// @Description Get a list of transactions with pagination
+// @Tags transactions
+// @Accept  json
+// @Produce  json
+// @Param   limit query int false "Limit"
+// @Param   page query int false "Page"
+// @Param   sort query string false "Sort" Enums(asc, desc)
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /transactions [get]
 func (c *TransactionController) GetTransactions(ctx *gin.Context) {
 	limit, err := strconv.Atoi(ctx.DefaultQuery("limit", "100"))
 	if err != nil {
@@ -65,6 +77,19 @@ func (c *TransactionController) GetTransactions(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+// @Summary Get transactions by user ID
+// @Description Get transactions for a specific user with pagination
+// @Tags transactions
+// @Accept  json
+// @Produce  json
+// @Param   user_id path int true "User ID"
+// @Param   limit query int false "Limit"
+// @Param   page query int false "Page"
+// @Param   sort query string false "Sort" Enums(asc, desc)
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /transactions/user/{user_id} [get]
 func (c *TransactionController) GetTransactionsByUserID(ctx *gin.Context) {
 	userID, err := strconv.Atoi(ctx.Param("user_id"))
 	if err != nil {
@@ -119,6 +144,20 @@ func (c *TransactionController) GetTransactionsByUserID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+// @Summary Get transactions by date range
+// @Description Get transactions within a specific date range
+// @Tags transactions
+// @Accept  json
+// @Produce  json
+// @Param   start_date query string true "Start date"
+// @Param   end_date query string true "End date"
+// @Param   limit query int false "Limit"
+// @Param   page query int false "Page"
+// @Param   sort query string false "Sort" Enums(asc, desc)
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /transactions/date [get]
 func (c *TransactionController) GetTransactionsByDateRange(ctx *gin.Context) {
 	startDate := ctx.Query("start_date")
 	endDate := ctx.Query("end_date")
@@ -175,6 +214,16 @@ func (c *TransactionController) GetTransactionsByDateRange(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+// @Summary Chargeback a transaction
+// @Description Perform a chargeback on a specific transaction
+// @Tags transactions
+// @Accept  json
+// @Produce  json
+// @Param   transaction_id path int true "Transaction ID"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /transactions/chargeback/{transaction_id} [post]
 func (c *TransactionController) ChargebackTransaction(ctx *gin.Context) {
 	transactionID, err := strconv.Atoi(ctx.Param("transaction_id"))
 	if err != nil {
@@ -191,6 +240,16 @@ func (c *TransactionController) ChargebackTransaction(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Chargeback successful"})
 }
 
+// @Summary Get transaction by ID
+// @Description Get details of a specific transaction
+// @Tags transactions
+// @Accept  json
+// @Produce  json
+// @Param   transaction_id path int true "Transaction ID"
+// @Success 200 {object} models.Transaction
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /transactions/{transaction_id} [get]
 func (c *TransactionController) GetTransactionByID(ctx *gin.Context) {
 	transactionID, err := strconv.Atoi(ctx.Param("transaction_id"))
 	if err != nil {

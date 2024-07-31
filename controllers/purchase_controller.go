@@ -15,6 +15,16 @@ func NewPurchaseController(service *services.PurchaseService) *PurchaseControlle
 	return &PurchaseController{service: service}
 }
 
+// @Summary Create a new purchase
+// @Description Create a new purchase for a user
+// @Tags purchases
+// @Accept  json
+// @Produce  json
+// @Param purchase body map[string]interface{} true "Purchase details"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /purchases [post]
 func (c *PurchaseController) CreatePurchase(ctx *gin.Context) {
 	var request struct {
 		UserID   int     `json:"user_id"`
@@ -36,6 +46,14 @@ func (c *PurchaseController) CreatePurchase(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Purchase successful"})
 }
 
+// @Summary Get all purchases
+// @Description Get details of all purchases
+// @Tags purchases
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} models.Purchase
+// @Failure 500 {object} map[string]string
+// @Router /purchases [get]
 func (c *PurchaseController) GetAllPurchases(ctx *gin.Context) {
 	purchases, err := c.service.GetAllPurchases()
 	if err != nil {
